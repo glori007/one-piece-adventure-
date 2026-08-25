@@ -1,0 +1,851 @@
+:root {
+  --navy: #0F2436;
+  --navy-2: #1C3A54;
+  --page-bg: #F6F8FB;
+  --red: #E23B33;
+  --red-dark: #B92C25;
+  --gold: #F2B43A;
+  --gold-dark: #CE9426;
+  --straw-gold: #F2B43A;
+  --sail-white: #FBF6EA;
+  --ink: #16202B;
+  --muted: #5A6B7B;
+  --card: #FFFFFF;
+  --line: #E2E8F0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--page-bg);
+  color: var(--ink);
+  font-family: "Poppins", sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--ink);
+}
+
+h1,
+h2 {
+  font-family: "Cinzel", serif;
+}
+
+a {
+  color: var(--red);
+}
+
+/* header */
+
+.site-header {
+  background-color: var(--navy);
+  position: relative;
+}
+
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  z-index: 2;
+}
+
+.brand-logo {
+  height: 58px;
+  width: auto;
+}
+
+/* nav links pinned to the centre of the header */
+.main-nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2rem;
+}
+
+.main-nav a {
+  color: #C7D3DF;
+  text-decoration: none;
+  font-weight: 500;
+  padding-bottom: 3px;
+  border-bottom: 2px solid transparent;
+}
+
+.main-nav a:hover {
+  color: var(--card);
+}
+
+.main-nav a.active {
+  color: var(--card);
+  border-bottom-color: var(--gold);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 2;
+}
+
+
+.welcome {
+  color: #C7D3DF;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+
+.header-link {
+  color: #C7D3DF;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header-link:hover {
+  color: var(--card);
+}
+
+.header-btn {
+  color: var(--card);
+  text-decoration: none;
+  font-weight: 600;
+  border: 1px solid #45586C;
+  border-radius: 2rem;
+  padding: 0.4rem 1.1rem;
+}
+
+.header-btn:hover {
+  background-color: var(--red);
+  border-color: var(--red);
+  color: var(--card);
+}
+
+/*  hero section */
+
+.hero {
+  position: relative;
+  background-color: var(--navy);
+  color: var(--card);
+  padding: 11rem 0;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+}
+
+/* rotating background slideshow */
+.hero-slides {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.hero-slide.active {
+  opacity: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(15, 36, 54, 0.62);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+}
+
+.hero h1 {
+  color: var(--card);
+  font-size: 3.4rem;
+  line-height: 1.1;
+  margin-bottom: 1.2rem;
+}
+
+.hero p {
+  color: #DCE4EC;
+  font-size: 1.15rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.hero .hero-quote {
+  color: var(--gold);
+  font-style: italic;
+}
+
+/* buttons design */
+
+.btn-red {
+  background-color: var(--red);
+  border: 1px solid var(--red);
+  color: var(--card);
+  font-weight: 600;
+}
+
+.btn-red:hover {
+  background-color: var(--red-dark);
+  border-color: var(--red-dark);
+  color: var(--card);
+}
+
+.btn-gold {
+  background-color: var(--gold);
+  border: 1px solid var(--gold-dark);
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.btn-gold:hover {
+  background-color: var(--gold-dark);
+  color: var(--card);
+}
+
+.btn-navy {
+  background-color: var(--navy);
+  border: 1px solid var(--navy);
+  color: var(--card);
+  font-weight: 600;
+}
+
+.btn-navy:hover {
+  background-color: var(--navy-2);
+  color: var(--card);
+}
+
+.btn-ghost-light {
+  background-color: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: var(--card);
+  font-weight: 600;
+}
+
+.btn-ghost-light:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--card);
+}
+
+/* board layout seperated filter bar and quests */
+
+.board-layout {
+  display: flex;
+  gap: 1.75rem;
+  align-items: flex-start;
+}
+
+.filter-sidebar {
+  flex: 0 0 330px;
+  position: sticky;
+  top: 1rem;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 1.25rem;
+}
+
+.filter-sidebar h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.filter-accordion .accordion-button {
+  font-weight: 600;
+  color: var(--navy);
+  padding: 0.7rem 0.9rem;
+}
+
+.filter-accordion .accordion-button:not(.collapsed) {
+  color: var(--navy);
+  background-color: #F2F5F9;
+  box-shadow: none;
+}
+
+.filter-accordion .accordion-button:focus {
+  box-shadow: none;
+  border-color: var(--line);
+}
+
+.filter-accordion .accordion-body {
+  padding: 0.6rem 0.9rem 0.9rem;
+}
+
+.filter-accordion .form-check {
+  margin-bottom: 0.2rem;
+}
+
+.filter-accordion .form-check-input:checked {
+  background-color: var(--red);
+  border-color: var(--red);
+}
+
+.filter-accordion .form-check-label {
+  text-transform: capitalize;
+}
+
+.board-list {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/*  day sections */
+
+.day-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.75rem 0 1rem;
+}
+
+.day-header:first-child {
+  margin-top: 0;
+}
+
+.day-header h2 {
+  margin-bottom: 0;
+  font-size: 1.5rem;
+}
+
+.day-header .day-line {
+  flex-grow: 1;
+  height: 2px;
+  background-color: var(--line);
+}
+
+/* horizontal quest cards */
+
+.quest-row {
+  display: flex;
+  height: 210px;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  overflow: hidden;
+  margin-bottom: 1.1rem;
+  position: relative;
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: card-appear 0.4s;
+}
+
+.quest-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0.6rem 1.3rem rgba(15, 36, 54, 0.16);
+}
+
+@keyframes card-appear {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quest-row-img {
+  flex: 0 0 300px;
+  width: 300px;
+  height: 100%;
+  object-fit: cover;
+}
+
+.quest-row-img.img-placeholder {
+  background-color: var(--navy-2);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+}
+
+/* small fixed-size quest thumbnail (Guild Master dashboard) */
+.quest-thumb {
+  flex: 0 0 130px;
+  width: 130px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+}
+
+.img-placeholder {
+  background-color: var(--navy-2);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.quest-row-body {
+  padding: 1.1rem 1.4rem;
+  flex: 1 1 auto;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.quest-row-body h3 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.quest-row-body h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.quest-row-body h3 a:hover {
+  color: var(--red);
+}
+
+/* scheduled-time line, framed by a line above and below */
+.time-row {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 0.55rem 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* available roles stacked vertically on the right of the card */
+.quest-row-roles {
+  flex: 0 0 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 1.1rem 1.3rem;
+}
+
+/*  type / difficulty / location badges on the cards */
+.quest-badges .badge {
+  font-size: 0.85rem;
+  padding: 0.42em 0.7em;
+}
+
+.quest-row-roles .role-pill {
+  display: block;
+  text-align: center;
+  padding: 0.4rem 0.55rem;
+}
+
+/* badges */
+
+.badge-type {
+  background-color: var(--navy-2);
+  color: var(--card);
+}
+
+.diff-easy {
+  background-color: #2F9E6E;
+  color: #fff;
+}
+
+.diff-medium {
+  background-color: var(--gold);
+  color: var(--navy);
+}
+
+.diff-hard {
+  background-color: var(--red);
+  color: #fff;
+}
+
+.diff-legendary {
+  background-color: #7A5CC4;
+  color: #fff;
+}
+
+.loc-elbaf {
+  background-color: #B5532E;
+  color: #fff;
+}
+
+.loc-wano-country {
+  background-color: #C0392B;
+  color: #fff;
+}
+
+.loc-egghead-island {
+  background-color: #1E9BB3;
+  color: #fff;
+}
+
+.badge-neutral {
+  background-color: var(--muted);
+  color: #fff;
+}
+
+.badge-locked {
+  background-color: var(--red);
+  color: #fff;
+}
+
+.badge-cancelled {
+  background-color: var(--muted);
+  color: #fff;
+}
+
+/* role pills */
+
+.role-pill {
+  display: inline-block;
+  background-color: #E7F1EA;
+  color: #2F7D57;
+  border-radius: 0.5rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.role-pill-full {
+  background-color: #FBE3E1;
+  color: var(--red-dark);
+}
+
+/* role pills ,  n of n places left text  */
+.places-list .role-pill {
+  display: inline-block;
+  width: 84px;
+  text-align: center;
+  margin-right: 0.4rem;
+}
+
+/* panels and tiles */
+
+.parchment-panel {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 1.5rem;
+}
+
+.stat-tile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--straw-gold);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  height: 100%;
+}
+
+.stat-tile .stat-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+}
+
+.stat-tile .stat-value-text {
+  font-size: 1.4rem;
+  text-transform: capitalize;
+}
+
+.stat-tile .stat-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-top: 0.25rem;
+}
+
+.stat-tile .stat-icon {
+  font-size: 1.7rem;
+  color: var(--straw-gold);
+  flex-shrink: 0;
+}
+
+.stat-accent-navy {
+  border-left-color: var(--navy);
+}
+
+.stat-accent-navy .stat-icon {
+  color: var(--navy);
+}
+
+.stat-accent-gold {
+  border-left-color: var(--straw-gold);
+}
+
+.stat-accent-gold .stat-icon {
+  color: var(--gold-dark);
+}
+
+.stat-accent-red {
+  border-left-color: var(--pirate-red);
+}
+
+.stat-accent-red .stat-icon {
+  color: var(--pirate-red);
+}
+
+.stat-accent-teal {
+  border-left-color: #2B7C8A;
+}
+
+.stat-accent-teal .stat-icon {
+  color: #2B7C8A;
+}
+
+.stat-highlight {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  background-color: var(--navy);
+  color: var(--sail-white);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.stat-highlight .stat-highlight-icon {
+  font-size: 2.2rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.stat-highlight .stat-highlight-label {
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  color: #C7D3DF;
+}
+
+.stat-highlight .stat-highlight-value {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+/* session detail */
+
+.detail-hero-img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.detail-hero-img.img-placeholder {
+  background-color: var(--navy-2);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.meta-chip {
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.meta-chip .meta-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
+}
+
+.meta-chip .meta-value {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.detail-description {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: #2C3A47;
+}
+
+.joined-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.joined-list li {
+  padding: 0.6rem 0.95rem;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--card);
+}
+
+/*tables */
+
+.guild-table {
+  background-color: var(--card);
+}
+
+.guild-table th {
+  background-color: var(--navy);
+  color: var(--card);
+}
+
+/*forms */
+
+.auth-panel {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.form-panel {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* footer */
+
+.site-footer {
+  background-color: var(--navy);
+  color: #C7D3DF;
+}
+
+.footer-cols {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4rem;
+}
+
+.footer-col {
+  min-width: 0;
+}
+
+.footer-logo {
+  height: 40px;
+  margin-bottom: 1rem;
+}
+
+.footer-tagline {
+  color: #9DB0C0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.site-footer h4 {
+  color: var(--gold);
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+  color: #C7D3DF;
+}
+
+.footer-links a {
+  color: #C7D3DF;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+}
+
+.footer-links i {
+  color: var(--gold);
+  margin-right: 0.3rem;
+}
+
+.footer-bottom {
+  background-color: #0A1826;
+}
+
+.footer-bottom .container {
+  color: #8FA2B3;
+  font-size: 0.85rem;
+}
+
+/*  misc */
+
+.hidden-card {
+  display: none;
+}
+
+.text-muted-ink {
+  color: var(--muted);
+}
+
+.counter-full {
+  color: var(--red);
+  font-weight: 600;
+}
+
+/* profile cards */
+.participation-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.participation-actions {
+  margin-top: auto;
+}
+
+/* locked participation banner */
+.locked-banner {
+  width: 100%;
+  text-align: center;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--red);
+  border-radius: 0.375rem;
+  color: var(--red-dark);
+  background-color: #FBE3E1;
+  font-weight: 600;
+}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %} — Login{% endblock %}
+
+{% block content %}
+
+<section class="auth-panel parchment-panel">
+  <h1 class="fs-3 mb-3"><i class="bi bi-door-open"></i> Login to the Guild</h1>
+
+  <form action="{{ url_for('authenticate') }}" method="post">
+
+    <label for="role" class="form-label">Profile</label>
+    <select class="form-select mb-3" name="role" id="role" required>
+      <option value="adventurer" selected>Adventurer</option>
+      <option value="guild_master">Guild Master</option>
+      <option value="council">Guild Council</option>
+    </select>
+
+    <label for="txt_email" class="form-label">Email</label>
+    <input type="email" class="form-control mb-3" name="txt_email" id="txt_email"
+      placeholder="Insert your email address" required>
+
+    <label for="txt_password" class="form-label">Password</label>
+    <div class="input-group mb-3">
+      <input type="password" class="form-control" name="txt_password" id="txt_password"
+        placeholder="Insert your password" required>
+      <button class="btn btn-outline-secondary toggle-password" type="button" data-target="txt_password"
+        aria-label="Show or hide password"><i class="bi bi-eye"></i></button>
+    </div>
+
+    <button type="submit" class="btn btn-gold w-100">Login</button>
+  </form>
+
+  <hr>
+  <p class="mb-0">New to the crew? <a href="{{ url_for('signup') }}">Register as an adventurer</a></p>
+</section>
+
+{% endblock %}

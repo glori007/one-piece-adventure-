@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %} — {{ psession.title }}{% endblock %}
+
+{% block content %}
+
+<!-- Full-width  image -->
+{% if psession.image %}
+<img src="{{ url_for('static', filename='images/quests/' + psession.image) }}" class="detail-hero-img"
+  alt="{{ psession.title }} illustration">
+{% else %}
+<div class="detail-hero-img img-placeholder"><i class="bi bi-compass"></i></div>
+{% endif %}
+
+<h1 class="mb-3">{{ psession.title }}</h1>
+
+<div class="row g-4">
+
+  <!-- Left presented quest information -->
+  <div class="col-7">
+
+    <section class="mb-4">
+      <h2 class="fs-3 mb-3">About this quest</h2>
+      <p class="detail-description">{{ psession.description }}</p>
+
+      <div class="meta-row mb-0">
+        <div class="meta-chip">
+          <span class="meta-label">Duration</span>
+          <span class="meta-value">{{ psession.duration_minutes }} min</span>
+        </div>
+        <div class="meta-chip">
+          <span class="meta-label">Difficulty</span>
+          <span class="meta-value">{{ psession.difficulty }}</span>
+        </div>
+        <div class="meta-chip">
+          <span class="meta-label">Type</span>
+          <span class="meta-value">{{ psession.type }}</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="fs-3 mb-3">Joined adventurers</h2>
+      {% if not pparticipants %}
+      <p class="text-muted-ink">No adventurers have joined this session yet. Be the first!</p>
+      {% else %}
+      <ul class="joined-list">
+        {% for person in pparticipants %}
+        <li>
+          <strong>{{ person.display_name }}</strong>
+          · {{ person.role_category }}
+          · x{{ person.places }}{% if person.places == 2 %} (companion brought){% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </section>
+
+    <a href="{{ url_for('home') }}" class="btn btn-outline-secondary mt-4">
+      <i class="bi bi-arrow-left"></i> Back to the Quest Board
+    </a>
+  </div>
+
+  <!-- Right presented session details + join -->
+  <div class="col-5">
+    <section class="parchment-panel">
+      <h2 class="fs-4 mb-3"><i class="bi bi-info-circle"></i> Session details</h2>
+
+      <div class="meta-row">
+        <div class="meta-chip">
+          <span class="meta-label">Day</span>
+          <span class="meta-value">{{ DAY_NAMES[psession.day] }}</span>
+        </div>
+        <div class="meta-chip">
+          <span class="meta-label">Start time</span>
+          <span class="meta-value">{{ psession.start_time }}</span>
+        </div>
+        <div class="meta-chip">
+          <span class="meta-label">Location</span>
+          <span class="meta-value">{{ psession.location }}</span>
+        </div>
+      </div>
+
+      <hr>
+
+      <h3 class="fs-5 mb-3"><i class="bi bi-people"></i> Party places</h3>
+      <ul class="list-unstyled places-list">
+        {% for role in ROLE_CAPACITY %}
+        <li class="mb-2">
+          {% if psession.remaining[role] > 0 %}
+          <span class="role-pill">{{ role }}</span>
+          <span id="rem-{{ role }}">{{ psession.remaining[role] }}</span> of {{ ROLE_CAPACITY[role] }} places left
+          {% else %}
+          <span class="role-pill role-pill-full">{{ role }}</span>
+          <span id="rem-{{ role }}">0</span> of {{ ROLE_CAPACITY[role] }} — fully booked
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+
+      <hr>
+
+      {% if not current_user.is_authenticated %}
+
+      <p>You must be a registered adventurer to join this quest session.</p>
+      <a href="{{ url_for('login') }}" class="btn btn-navy">Login</a>
+      <a href="{{ url_for('signup') }}" class="btn btn-gold">Register</a>
+
+      {% elif not current_user.is_adventurer() %}
+
+      <p class="text-muted-ink mb-0">
+        <i class="bi bi-eye"></i> <strong>View-only mode</strong> —
+        only adventurers can join quest sessions.
+      </p>
+
+      {% elif pparticipation and pparticipation.status == 'active' %}
+
+      <p>
+        <i class="bi bi-check-circle"></i>
+        You joined this session as <strong>{{ pparticipation.role_category }}</strong>
+        with <strong>{{ pparticipation.places }}</strong> place(s).
+      </p>
+      <a href="{{ url_for('profile') }}" class="btn btn-navy">Manage it in your profile</a>
+
+      {% else %}
+
+      <h3 class="fs-5">Join this session</h3>
+      <form action="{{ url_for('join_session', id_session=psession.id) }}" method="post">
+
+        <label for="role-select" class="form-label">Party role</label>
+        <select class="form-select mb-2" name="role_category" id="role-select" required>
+          {% for role in ROLE_CAPACITY %}
+          <option value="{{ role }}" {% if psession.remaining[role] <=0 %}disabled{% endif %}>{{ role }}</option>
+          {% endfor %}
+        </select>
+
+        <label for="places-select" class="form-label">Places (2 to bring a companion)</label>
+        <select class="form-select mb-2" name="places" id="places-select" required>
+          <option value="1">1 place — just me</option>
+          <option value="2">2 places — me and a companion</option>
+        </select>
+
+        <p class="text-muted-ink mb-2" id="places-hint"></p>
+
+        <button type="submit" class="btn btn-red w-100"><i class="bi bi-flag"></i> Join the quest</button>
+      </form>
+
+      {% endif %}
+    </section>
+  </div>
+
+</div>
+
+{% endblock %}

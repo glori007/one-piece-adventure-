@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %} — Edit Session{% endblock %}
+
+{% block content %}
+
+<section class="form-panel parchment-panel">
+  <h1 class="fs-3 mb-3"><i class="bi bi-pencil"></i> Edit quest session</h1>
+  <p>
+    Session of <strong>{{ psession.title }}</strong> — editable because no adventurer has joined yet.
+    The quest itself cannot be changed.
+  </p>
+
+  <form action="{{ url_for('update_session', id_session=psession.id) }}" method="post">
+
+    <div class="row g-3">
+      <div class="col-4">
+        <label for="day" class="form-label">Day</label>
+        <select class="form-select mb-3" name="day" id="day" required>
+          {% for number, name in DAY_NAMES.items() %}
+          <option value="{{ number }}" {% if psession.day == number %}selected{% endif %}>{{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-4">
+        <label for="txt_start_time" class="form-label">Starting time (HH:MM)</label>
+        <input type="text" class="form-control mb-3" name="txt_start_time" id="txt_start_time"
+          value="{{ psession.start_time }}" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" required>
+      </div>
+      <div class="col-4">
+        <label for="location" class="form-label">Location</label>
+        <select class="form-select mb-3" name="location" id="location" required>
+          {% for place in LOCATIONS %}
+          <option value="{{ place }}" {% if psession.location == place %}selected{% endif %}>{{ place }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-gold w-100"><i class="bi bi-check-circle"></i> Save changes</button>
+  </form>
+
+  <a href="{{ url_for('master') }}" class="btn btn-outline-secondary w-100 mt-2">Back to the Guild Master's log</a>
+</section>
+
+{% endblock %}

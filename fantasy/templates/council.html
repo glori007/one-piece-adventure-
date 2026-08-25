@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %} — Guild Council{% endblock %}
+
+{% block active_council %}active{% endblock %}
+
+{% block content %}
+
+<h1 class="fs-2 mb-3"><i class="bi bi-bank"></i> Guild Council — weekly overview</h1>
+
+<!-- platform statistics -->
+<div class="row row-cols-4 g-3 mb-3">
+  <div class="col">
+    <div class="stat-tile stat-accent-navy">
+      <div class="stat-body">
+        <div class="stat-value">{{ pstats.total_adventurers }}</div>
+        <div class="stat-label">Registered adventurers</div>
+      </div>
+      <i class="bi bi-people stat-icon"></i>
+    </div>
+  </div>
+  <div class="col">
+    <div class="stat-tile stat-accent-gold">
+      <div class="stat-body">
+        <div class="stat-value">{{ pstats.total_quests }}</div>
+        <div class="stat-label">Quests</div>
+      </div>
+      <i class="bi bi-map stat-icon"></i>
+    </div>
+  </div>
+  <div class="col">
+    <div class="stat-tile stat-accent-red">
+      <div class="stat-body">
+        <div class="stat-value">{{ pstats.total_sessions }}</div>
+        <div class="stat-label">Quest sessions</div>
+      </div>
+      <i class="bi bi-calendar-event stat-icon"></i>
+    </div>
+  </div>
+  <div class="col">
+    <div class="stat-tile stat-accent-teal">
+      <div class="stat-body">
+        <div class="stat-value">{{ pstats.total_participations }}</div>
+        <div class="stat-label">Active participations</div>
+      </div>
+      <i class="bi bi-journal-bookmark stat-icon"></i>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="stat-tile stat-accent-navy">
+      <div class="stat-body">
+        <div class="stat-value">{{ pstats.places_per_role['Warrior'] }}</div>
+        <div class="stat-label">Warrior places reserved</div>
+      </div>
+      <i class="bi bi-shield stat-icon"></i>
+    </div>
+  </div>
+  <div class="col">
+    <div class="stat-tile stat-accent-gold">
+      <div class="stat-body">
+        <div class="stat-value">{{ pstats.places_per_role['Mage'] }}</div>
+        <div class="stat-label">Mage places reserved</div>
+      </div>
+      <i class="bi bi-magic stat-icon"></i>
+    </div>
+  </div>
+  <div class="col">
+    <div class="stat-tile stat-accent-red">
+      <div class="stat-body">
+        <div class="stat-value">{{ pstats.places_per_role['Healer'] }}</div>
+        <div class="stat-label">Healer places reserved</div>
+      </div>
+      <i class="bi bi-heart-pulse stat-icon"></i>
+    </div>
+  </div>
+  <div class="col">
+    <div class="stat-tile stat-accent-teal">
+      <div class="stat-body">
+        <div class="stat-value stat-value-text">
+          {% if pstats.popular_type %}{{ pstats.popular_type }}{% else %}—{% endif %}
+        </div>
+        <div class="stat-label">Most popular quest type</div>
+      </div>
+      <i class="bi bi-star stat-icon"></i>
+    </div>
+  </div>
+</div>
+
+<!-- busiest session highlight -->
+<div class="stat-highlight mb-4">
+  <i class="bi bi-fire stat-highlight-icon"></i>
+  <div>
+    <div class="stat-highlight-label">Busiest quest session</div>
+    <div class="stat-highlight-value">
+      {% if pstats.busiest_session %}
+      {{ pstats.busiest_session.title }}
+      — {{ DAY_NAMES[pstats.busiest_session.day] }} at {{ pstats.busiest_session.start_time }},
+      {{ pstats.busiest_session.reserved_total }} reserved places
+      {% else %}
+      No participations yet
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- adventurers -->
+<div class="day-header">
+  <h2 class="fs-3"><i class="bi bi-people"></i> Registered adventurers</h2>
+  <span class="day-line"></span>
+</div>
+
+<table class="table guild-table table-bordered align-middle mb-4">
+  <thead>
+    <tr>
+      <th>Adventurer</th>
+      <th>Email</th>
+      <th>Quest participations</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for adventurer in padventurers %}
+    <tr>
+      <td>{{ adventurer.display_name }}</td>
+      <td>{{ adventurer.email }}</td>
+      <td>{{ adventurer.participations }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- quests and sessions -->
+<div class="day-header">
+  <h2 class="fs-3"><i class="bi bi-map"></i> Weekly quests and sessions</h2>
+  <span class="day-line"></span>
+</div>
+
+{% for quest in pquests %}
+<section class="parchment-panel mb-4">
+  <h3 class="fs-4 mb-1">{{ quest.title }}</h3>
+  <p class="mb-2">
+    <span class="badge badge-type">{{ quest.type }}</span>
+    <span class="badge diff-{{ quest.difficulty }}">{{ quest.difficulty }}</span>
+    <span class="badge badge-neutral">{{ quest.duration_minutes }} min</span>
+  </p>
+
+  {% if not quest.sessions %}
+  <p class="mb-0">No sessions scheduled.</p>
+  {% else %}
+  <table class="table guild-table table-bordered align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Time</th>
+        <th>Location</th>
+        <th>Available roles</th>
+        <th>Current participations</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for session in quest.sessions %}
+      <tr>
+        <td>{{ DAY_NAMES[session.day] }}</td>
+        <td>{{ session.start_time }}</td>
+        <td>
+          <span class="badge loc-{{ session.location|lower|replace(' ', '-') }}">{{ session.location }}</span>
+        </td>
+        <td>
+          {% for role in ROLE_CAPACITY %}
+          {% if session.remaining[role] > 0 %}
+          <span class="role-pill">{{ role }} {{ session.remaining[role] }}</span>
+          {% else %}
+          <span class="role-pill role-pill-full">{{ role }} full</span>
+          {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% if not pparticipants[session.id] %}
+          <span>Nobody joined yet</span>
+          {% else %}
+          <ul class="list-unstyled mb-0">
+            {% for person in pparticipants[session.id] %}
+            <li>{{ person.display_name }} — {{ person.role_category }} × {{ person.places }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</section>
+{% endfor %}
+
+{% endblock %}

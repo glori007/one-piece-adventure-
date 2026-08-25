@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %} — Schedule Session{% endblock %}
+
+{% block content %}
+
+<section class="form-panel parchment-panel">
+  <h1 class="fs-3 mb-3"><i class="bi bi-calendar-plus"></i> Schedule a quest session</h1>
+  <p>Each location hosts only one quest session at a time: overlapping
+    sessions in the same place are refused.</p>
+
+  <form action="{{ url_for('create_session') }}" method="post">
+
+    <label for="id_quest" class="form-label">Quest</label>
+    <select class="form-select mb-3" name="id_quest" id="id_quest" required>
+      {% for quest in pquests %}
+      <option value="{{ quest.id }}">{{ quest.title }} ({{ quest.duration_minutes }} min)</option>
+      {% endfor %}
+    </select>
+
+    <div class="row g-3">
+      <div class="col-4">
+        <label for="day" class="form-label">Day</label>
+        <select class="form-select mb-3" name="day" id="day" required>
+          {% for number, name in DAY_NAMES.items() %}
+          <option value="{{ number }}">{{ name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-4">
+        <label for="txt_start_time" class="form-label">Starting time (HH:MM)</label>
+        <input type="text" class="form-control mb-3" name="txt_start_time" id="txt_start_time" placeholder="e.g. 09:30"
+          pattern="([01][0-9]|2[0-3]):[0-5][0-9]" required>
+      </div>
+      <div class="col-4">
+        <label for="location" class="form-label">Location</label>
+        <select class="form-select mb-3" name="location" id="location" required>
+          {% for place in LOCATIONS %}
+          <option value="{{ place }}">{{ place }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-gold w-100"><i class="bi bi-calendar-plus"></i> Schedule session</button>
+  </form>
+</section>
+
+{% endblock %}

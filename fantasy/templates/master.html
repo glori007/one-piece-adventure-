@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %} — Guild Master{% endblock %}
+
+{% block active_master %}active{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="fs-2 mb-0"><i class="bi bi-flag"></i> Guild Master's log</h1>
+  <div>
+    <a href="{{ url_for('new_quest') }}" class="btn btn-gold"><i class="bi bi-plus-circle"></i> New quest</a>
+    <a href="{{ url_for('new_session') }}" class="btn btn-navy"><i class="bi bi-calendar-plus"></i> Schedule session</a>
+  </div>
+</div>
+
+<p>
+  Sessions can be modified or cancelled only while no adventurer has joined them.
+  Quests cannot be modified once created.
+</p>
+
+{% if not pquests %}
+<section class="parchment-panel text-center">
+  <h2 class="fs-4">The quest log is empty</h2>
+  <p class="mb-0">Create your first quest to start filling the week.</p>
+</section>
+{% endif %}
+
+{% for quest in pquests %}
+<section class="parchment-panel mb-4">
+  <div class="d-flex align-items-start mb-3">
+    {% if quest.image %}
+    <img src="{{ url_for('static', filename='images/quests/' + quest.image) }}" class="quest-thumb me-3"
+      alt="{{ quest.title }} illustration">
+    {% else %}
+    <div class="img-placeholder quest-thumb me-3"><i class="bi bi-compass"></i></div>
+    {% endif %}
+    <div>
+      <h2 class="fs-4 mb-1">{{ quest.title }}</h2>
+      <p class="mb-1">
+        <span class="badge badge-type">{{ quest.type }}</span>
+        <span class="badge diff-{{ quest.difficulty }}">{{ quest.difficulty }}</span>
+        <span class="badge badge-neutral">{{ quest.duration_minutes }} min</span>
+      </p>
+      <p class="mb-0">{{ quest.description }}</p>
+    </div>
+  </div>
+
+  {% if not quest.sessions %}
+  <p class="mb-0"><i class="bi bi-info-circle"></i> No sessions scheduled for this quest yet.</p>
+  {% else %}
+  <table class="table guild-table table-bordered align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Time</th>
+        <th>Location</th>
+        <th>Warrior</th>
+        <th>Mage</th>
+        <th>Healer</th>
+        <th>Reserved</th>
+        <th>Most requested</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for session in quest.sessions %}
+      <tr>
+        <td>{{ DAY_NAMES[session.day] }}</td>
+        <td>{{ session.start_time }}</td>
+        <td>
+          <span class="badge loc-{{ session.location|lower|replace(' ', '-') }}">{{ session.location }}</span>
+        </td>
+        <td>{{ session.taken['Warrior'] }}/{{ ROLE_CAPACITY['Warrior'] }}</td>
+        <td>{{ session.taken['Mage'] }}/{{ ROLE_CAPACITY['Mage'] }}</td>
+        <td>{{ session.taken['Healer'] }}/{{ ROLE_CAPACITY['Healer'] }}</td>
+        <td><strong>{{ session.reserved_total }}</strong></td>
+        <td>
+          {% if session.most_requested %}
+          {{ session.most_requested|join(', ') }}
+          {% else %}
+          —
+          {% endif %}
+        </td>
+        <td>
+          {% if session.has_participants %}
+          <span class="badge badge-locked">Has adventurers</span>
+          {% else %}
+          <a href="{{ url_for('edit_session', id_session=session.id) }}" class="btn btn-sm btn-navy">
+            <i class="bi bi-pencil"></i> Edit
+          </a>
+          <form action="{{ url_for('delete_session', id_session=session.id) }}" method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-outline-danger">
+              <i class="bi bi-x-circle"></i> Cancel
+            </button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</section>
+{% endfor %}
+
+{% endblock %}

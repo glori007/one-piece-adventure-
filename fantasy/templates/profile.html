@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %} — My Quest Sessions{% endblock %}
+
+{% block active_profile %}active{% endblock %}
+
+{% block content %}
+
+<h1 class="fs-2 mb-1"><i class="bi bi-journal-bookmark"></i> My sessions</h1>
+<p class="text-muted-ink mb-1">Logged in as {{ current_user.display_name }} ({{ current_user.email }}).</p>
+<p class="text-muted-ink">
+  Note: Sessions cannot be cancelled or modified if they start within 8 hours from now.
+</p>
+
+<!--  Participated sessions-->
+<div class="day-header">
+  <h2 class="fs-3"><i class="bi bi-flag"></i> Participated</h2>
+  <span class="day-line"></span>
+</div>
+
+{% if not pparticipated %}
+<p class="text-muted-ink">No participations yet. Find your next adventure on the
+  <a href="{{ url_for('home') }}">Quest Board</a>!
+</p>
+{% endif %}
+
+<div class="row row-cols-2 g-4">
+  {% for item in pparticipated %}
+  <div class="col">
+    <article class="parchment-panel participation-card h-100">
+      <h3 class="fs-5">
+        <a href="{{ url_for('session_detail', id_session=item.id_session) }}" class="text-decoration-none">{{ item.title
+          }}</a>
+      </h3>
+      <p class="mb-2">
+        <i class="bi bi-calendar-event"></i> {{ DAY_NAMES[item.day] }} at {{ item.start_time }}
+        · <i class="bi bi-geo-alt"></i> {{ item.location }}
+      </p>
+      <p class="mb-2">
+        <span class="role-pill">{{ item.role_category }}</span>
+        <strong>{{ item.places }}</strong> reserved {% if item.places == 1 %}place{% else %}places{% endif %}
+      </p>
+
+      <div class="participation-actions">
+        {% if item.modifiable %}
+        <form action="{{ url_for('edit_participation', id_participation=item.id) }}" method="post"
+          class="row g-2 align-items-end">
+          <div class="col-5">
+            <label for="role-{{ item.id }}" class="form-label">Role</label>
+            <select class="form-select" name="role_category" id="role-{{ item.id }}">
+              {% for role in ROLE_CAPACITY %}
+              <option value="{{ role }}" {% if item.role_category==role %}selected{% endif %}>{{ role }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-4">
+            <label for="places-{{ item.id }}" class="form-label">Places</label>
+            <select class="form-select" name="places" id="places-{{ item.id }}">
+              <option value="1" {% if item.places==1 %}selected{% endif %}>1</option>
+              <option value="2" {% if item.places==2 %}selected{% endif %}>2</option>
+            </select>
+          </div>
+          <div class="col-3">
+            <button type="submit" class="btn btn-navy w-100">Save</button>
+          </div>
+        </form>
+        <form action="{{ url_for('cancel_participation', id_participation=item.id) }}" method="post" class="mt-2">
+          <button type="submit" class="btn btn-outline-danger w-100">
+            <i class="bi bi-x-circle"></i> Cancel participation
+          </button>
+        </form>
+        {% else %}
+        <div class="locked-banner">
+          <i class="bi bi-lock"></i> Locked - Cannot be modified / cancelled
+        </div>
+        {% endif %}
+      </div>
+    </article>
+  </div>
+  {% endfor %}
+</div>
+
+<!--  Cancelled -->
+<div class="day-header">
+  <h2 class="fs-3"><i class="bi bi-x-octagon"></i> Cancelled</h2>
+  <span class="day-line"></span>
+</div>
+
+{% if not pcancelled %}
+<p class="text-muted-ink">No cancelled participations.</p>
+{% endif %}
+
+<div class="row row-cols-2 g-4">
+  {% for item in pcancelled %}
+  <div class="col">
+    <article class="parchment-panel h-100">
+      <h3 class="fs-5">
+        <a href="{{ url_for('session_detail', id_session=item.id_session) }}" class="text-decoration-none">{{ item.title
+          }}</a>
+      </h3>
+      <p class="mb-2">
+        <i class="bi bi-calendar-event"></i> {{ DAY_NAMES[item.day] }} at {{ item.start_time }}
+        · <i class="bi bi-geo-alt"></i> {{ item.location }}
+      </p>
+      <p class="mb-0">
+        <span class="role-pill">{{ item.role_category }}</span>
+        {{ item.places }} {% if item.places == 1 %}place{% else %}places{% endif %}
+        <span class="badge badge-cancelled">Cancelled</span>
+      </p>
+    </article>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

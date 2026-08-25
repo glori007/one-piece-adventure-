@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %} — Quest Board{% endblock %}
+
+{% block active_board %}active{% endblock %}
+
+{% block main %}
+
+<!--  rotating background slideshow -->
+{% set hero_images = ['main_page_1.webp', 'main_page_2.webp', 'main_page_3.png', 'main_page_4.jpeg',
+'main_page_5.jpeg', 'main_page_6.jpeg', 'main_page_7.avif'] %}
+<section class="hero">
+  <div class="hero-slides">
+    {% for img in hero_images %}
+    <img class="hero-slide {% if loop.first %}active{% endif %}" src="{{ url_for('static', filename='images/' + img) }}"
+      alt="">
+    {% endfor %}
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="container">
+    <div class="hero-content">
+      <h1>My treasure is yours<br>if you want it</h1>
+      <p>
+        These final words of the Pirate King, <span class="hero-quote">Gol&nbsp;D.&nbsp;Roger</span>,
+        drove countless souls to the sea — the world has truly entered the great pirate era.
+        Join the guild, sail the Grand Line and take part in the quests that lead to the One Piece.
+      </p>
+      <div>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('signup') }}" class="btn btn-red btn-lg px-4 me-2"><i class="bi bi-flag"></i> Set Sail</a>
+        {% endif %}
+        <a href="#quests" class="btn btn-ghost-light btn-lg px-4"><i class="bi bi-compass"></i> Quests</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container my-4 flex-grow-1" id="quests">
+  <div class="board-layout">
+
+    <!-- Vertical filter sidebar -->
+    <aside class="filter-sidebar">
+      <h2 class="mb-3"><i class="bi bi-funnel"></i> Filter quests</h2>
+
+      <label for="search-input" class="form-label">Search by title</label>
+      <input type="text" class="form-control mb-3" id="search-input" placeholder="e.g. Onigashima">
+
+      <form action="{{ url_for('home') }}" method="get">
+        <div class="accordion filter-accordion mb-3">
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button {% if not f_days %}collapsed{% endif %}" type="button"
+                data-bs-toggle="collapse" data-bs-target="#flt-day">Day</button>
+            </h3>
+            <div id="flt-day" class="accordion-collapse collapse {% if f_days %}show{% endif %}">
+              <div class="accordion-body">
+                {% for number, name in DAY_NAMES.items() %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="f_day" value="{{ number }}" id="day{{ number }}"
+                    {% if number|string in f_days %}checked{% endif %}>
+                  <label class="form-check-label" for="day{{ number }}">{{ name }}</label>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button {% if not f_types %}collapsed{% endif %}" type="button"
+                data-bs-toggle="collapse" data-bs-target="#flt-type">Quest type</button>
+            </h3>
+            <div id="flt-type" class="accordion-collapse collapse {% if f_types %}show{% endif %}">
+              <div class="accordion-body">
+                {% for qtype in QUEST_TYPES %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="f_type" value="{{ qtype }}"
+                    id="type{{ loop.index }}" {% if qtype in f_types %}checked{% endif %}>
+                  <label class="form-check-label" for="type{{ loop.index }}">{{ qtype }}</label>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button {% if not f_difficulties %}collapsed{% endif %}" type="button"
+                data-bs-toggle="collapse" data-bs-target="#flt-diff">Difficulty</button>
+            </h3>
+            <div id="flt-diff" class="accordion-collapse collapse {% if f_difficulties %}show{% endif %}">
+              <div class="accordion-body">
+                {% for level in DIFFICULTIES %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="f_difficulty" value="{{ level }}"
+                    id="diff{{ loop.index }}" {% if level in f_difficulties %}checked{% endif %}>
+                  <label class="form-check-label" for="diff{{ loop.index }}">{{ level }}</label>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h3 class="accordion-header">
+              <button class="accordion-button {% if not f_roles %}collapsed{% endif %}" type="button"
+                data-bs-toggle="collapse" data-bs-target="#flt-role">Available role</button>
+            </h3>
+            <div id="flt-role" class="accordion-collapse collapse {% if f_roles %}show{% endif %}">
+              <div class="accordion-body">
+                {% for role in ROLE_CAPACITY %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="f_role" value="{{ role }}"
+                    id="role{{ loop.index }}" {% if role in f_roles %}checked{% endif %}>
+                  <label class="form-check-label" for="role{{ loop.index }}">{{ role }}</label>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-navy w-100 mb-2"><i class="bi bi-funnel"></i> Apply filters</button>
+        <a href="{{ url_for('home') }}" class="btn btn-outline-secondary w-100">Reset</a>
+      </form>
+    </aside>
+
+    <!-- Session list -->
+    <div class="board-list">
+
+      {% if not pdays %}
+      <section class="parchment-panel text-center">
+        <h2 class="fs-4">No quest sessions match your search</h2>
+        <p class="mb-0">Try different filters, or come back when the Guild Master schedules new adventures.</p>
+      </section>
+      {% endif %}
+
+      {% for day in pdays %}
+      <section class="day-section">
+        <div class="day-header">
+          <h2><i class="bi bi-calendar-event"></i> {{ day.name }}</h2>
+          <span class="day-line"></span>
+        </div>
+
+        {% for session in day.sessions %}
+        <article class="quest-row session-card">
+          {% if session.image %}
+          <img src="{{ url_for('static', filename='images/quests/' + session.image) }}" class="quest-row-img"
+            alt="{{ session.title }} illustration">
+          {% else %}
+          <div class="quest-row-img img-placeholder"><i class="bi bi-compass"></i></div>
+          {% endif %}
+
+          <div class="quest-row-body">
+            <h3 class="quest-title">
+              <a href="{{ url_for('session_detail', id_session=session.id) }}" class="stretched-link">
+                {{ session.title }}
+              </a>
+            </h3>
+
+            <p class="quest-badges mb-0">
+              <span class="badge badge-type">{{ session.type }}</span>
+              <span class="badge diff-{{ session.difficulty }}">{{ session.difficulty }}</span>
+              <span class="badge loc-{{ session.location|lower|replace(' ', '-') }}">
+                <i class="bi bi-geo-alt"></i> {{ session.location }}
+              </span>
+            </p>
+
+            <p class="time-row mb-0">
+              <i class="bi bi-calendar-event"></i> {{ day.name }}
+              · <i class="bi bi-clock"></i> {{ session.start_time }}
+              · <i class="bi bi-stopwatch"></i> {{ session.duration_minutes }} min
+            </p>
+          </div>
+
+          <div class="quest-row-roles">
+            {% for role in ROLE_CAPACITY %}
+            {% if session.remaining[role] > 1 %}
+            <span class="role-pill">{{ role }}: {{ session.remaining[role] }} spots left</span>
+            {% elif session.remaining[role] == 1 %}
+            <span class="role-pill">{{ role }}: 1 spot left</span>
+            {% else %}
+            <span class="role-pill role-pill-full">{{ role }}: full</span>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </article>
+        {% endfor %}
+      </section>
+      {% endfor %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
